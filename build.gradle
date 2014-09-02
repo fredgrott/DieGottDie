@@ -6,10 +6,94 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.2'
+         // debug log plugin
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
+        // spoon-gradle plugin for debugging
+        classpath 'com.stanfy.spoon:spoon-gradle-plugin:0.10.0'
+
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+}
+
+ext {
+
+    buildNumberPropsFile = file('buildnumber.properties')
+
+    Properties buildNumberProps = new Properties()
+    buildNumberProps.load(new FileInputStream(buildNumberPropsFile))
+
+    buildNumber = buildNumberProps['BUILD_NUMBER'].toInteger() + 1
+    buildNumberProps['BUILD_NUMBER']= buildNumber.toString()
+    buildNumberProps.store(buildNumberPropsFile.newWriter(), null)
+
+    //These are manually adjusted per branch/merge and
+    //release
+    //
+    //branch and than mere back to master is
+    //always a VersionPatch
+    //
+    //Release is either a VersionMinor or VersionMajor
+    appVersionMajor = 1
+    appVersionMinor = 0
+    appVersionPatch = 0
+    appVersionBuild = buildNumber
+
+    ourVersionCode = appVersionMajor * 10000 + appVersionMinor * 1000 + appVersionPatch * 100 + appVersionBuild
+
+    buildCodeQA = '${buildDir}/reports/codeqa'
+    jacocoReportsDir = '${buildDir}/reports/jacoco'
+    androidTestReportsDir = '${buildDir}/reports/androidTests'
+    homePath = System.properties['user.home']
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    myStoreFile = properties.getProperty('storefile.loc')
+    myStorePass = properties.getProperty('store.pass')
+    myKeyAlias = properties.getProperty('key.alias')
+    myKeyPass = properties.getProperty('key.pass')
+
+    releasePath = file("${rootDir}/archive/${project.name}")
+
+    reportBuildDate = new Date().format('yyyy.MM.dd')
+
+    reportBuildTime = new Date().format('HH:mm:ss')
+
+    isJenkins = "true".equals(System.getenv("JENKINS"))
+    preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+    buildTime = new Date().format("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone("UTC"))
+
+
+    //dependencies
+    androidsupportv4 = 'com.android.support:support-v4:20.0.+'
+    phrase = 'com.squareup.phrase:phrase:1.0.3'
+    butterknife = 'com.jakewharton:butterknife:5.0.+'
+    dagger = 'com.squareup.dagger:dagger:1.2.+'
+    daggercompiler = 'com.squareup.dagger:dagger-compiler:1.2.+'
+    dexmaker = 'com.google.dexmaker:dexmaker:1.0'
+    dexmakermockito = 'com.google.dexmaker:dexmaker-mockito:1.0'
+    doubleespresso = 'com.jakewharton.espresso:espresso:1.1-r3'
+    fest = 'com.squareup:fest-android:1.0.+'
+    flow = 'com.squareup.flow:flow:0.7'
+    madge = 'com.jakewharton.madge:madge:1.1.1'
+    mockito = 'org.mockito:mockito-core:1.9.5'
+    mortar = 'com.squareup.mortar:mortar:0.16'
+    okhttp = 'com.squareup.okhttp:okhttp:1.6.0'
+    okhttpurlconnection = 'com.squareup.okhttp:okhttp-urlconnection:1.6.+'
+    okio = 'com.squareup.okio:okio:1.0.+'
+    otto = 'com.squareup:otto:1.3.4'
+    playservices = 'com.google.android.gms:play-services:5.0.89'
+    retrofit = 'com.squareup.retrofit:retrofit:1.6.0'
+    retrofitmock = 'com.squareup.retrofit:retrofit-mock:1.6.0'
+    robotium = 'com.jayway.android.robotium:robotium-solo:5.2.1'
+    rxjava = 'com.netflix.rxjava:rxjava-android:0.+'
+    scalpel = 'com.jakewharton.scalpel:scalpel:1.1.2'
+    spoonclient = 'com.squareup.spoon:spoon-client:1.1.1'
+    timber = 'com.jakewharton.timber:timber:2.2.2'
+
+
+
+
 }
 
 allprojects {
