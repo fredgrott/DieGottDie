@@ -18,18 +18,24 @@ android platform.
 
 The main differences is that the debug menu will be implemented differently
 as we do not have a navigational drawer in the main application. The second difference
-is that implementing a way to use annootations and some other things to bring the 
+is that implementing a way to use annotations and some other things to bring the 
 ability to offer different layouts for both phones and tablets.
+
+# Philosophy 
+
+Main philosophy is DRY, Don't Repeat Yourself.
 
 # Credits
 
 Thanks goes to Square and LemonLabs whose stuff I have built upon here with this demo application.
 
-# Job and project Work Inquiries 
+# Job and Project Work Inquiries 
 
 I only talk to founders, and usually that is over a paid meal at my location.
+I hang out in several online developer locations and have a G+ profile, the resourceful ones
+will always be able to find my email addy.
 
 
 # LICENSE
 
-This project is licensed under Apache Liccense 2.0.
+This project is licensed under Apache License 2.0.

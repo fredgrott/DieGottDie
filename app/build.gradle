@@ -1,24 +1,202 @@
 apply plugin: 'com.android.application'
+apply plugin: 'spoon'
+apply plugin: 'hugo'
+apply plugin: 'idea'
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
 
 android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
+    //sets preDexing to false if executing on a CI server
+    dexOptions {
+        // when running on Jenkins CI, turn off or via - Dpre-dex=false
+        preDexLibraries = rootProject.ext.preDexEnabled && !rootProject.ext.isJenkins
+    }
+
 
     defaultConfig {
         applicationId "com.grotttworkshop.diegottdie"
         minSdkVersion 16
         targetSdkVersion 20
-        versionCode 1
-        versionName "1.0"
+        versionCode rootProject.ext.ourVersionCode
+        versionName "${rootProject.ext.appVersionMajor}.${rootProject.ext.appVersionMinor}.${rootProject.ext.appVersionPatch}"
+
+        buildConfigField "String", "BUILD_TIME", "\"${rootProject.ext.buildTime}\""
+
+        testApplicationId "com.grottworkshop.diegottdie.test"
+        testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
+        testHandleProfiling true
+        testFunctionalTest true
+
+
     }
+
+    testOptions {
+        reportDir = "${project.buildDir}/reports/androidTests"
+    }
+
+    aaptOptions {
+        noCompress 'txt'
+        ignoreAssetsPattern "!.svn:!.git:!.ds_store:!*.scc:.*:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+
+    signingConfigs {
+
+        release {
+            //props stored in gradle.properties at userhome .gradle subfolder
+
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+
+
     buildTypes {
+        debug{
+            debuggable true
+            runProguard false
+            //until dagger jacaco conflict issue is resolved
+            testCoverageEnabled false
+
+            // here we go, versionNameSuffix with build date!
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-dev-' + rootProject.ext.buildTime
+
+
+        }
+
         release {
             runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-butterknife.pro','proguard-dagger.pro','proguard-project.pro'
+            applicationIdSuffix '.release'
+            versionNameSuffix '-release-' + rootProject.ext.buildTime
+            signingConfig signingConfigs.release
+
+
+
         }
     }
+
+    lintOptions{
+        lintConfig file("custom-lint.xml")
+
+        // set to true to turn off analysis progress reporting by lint
+        quiet false
+        // if true, stop the gradle build if errors are found
+        abortOnError false
+        // if true, only report errors
+        ignoreWarnings true
+        // if true, emit full/absolute paths to files with errors (true by default)
+        //absolutePaths true
+        // if true, check all issues, including those that are off by default
+        checkAllWarnings true
+        // if true, treat all warnings as errors
+        warningsAsErrors true
+        // turn off checking the given issue id's
+        disable 'TypographyFractions','TypographyQuotes'
+        // turn on the given issue id's
+        enable 'RtlHardcoded','RtlCompat', 'RtlEnabled'
+        // check *only* the given issue id's
+        check 'NewApi', 'InlinedApi'
+        // if true, don't include source code lines in the error output
+        noLines false
+        // if true, show all locations for an error, do not truncate lists, etc.
+        showAll true
+
+        // if true, generate a text report of issues (false by default)
+        textReport true
+        // location to write the output; can be a file or 'stdout'
+        textOutput 'stdout'
+        // if true, generate an XML report for use by for example Jenkins
+        xmlReport false
+        // file to write report to (if not specified, defaults to lint-results.xml)
+        xmlOutput file("${buildDir}/reports/codeqa/lint-report-${rootProject.ext.ourVersionCode}-${rootProject.ext.reportBuildDate}-${rootProject.ext.reportBuildTime}.xml")
+        // if true, generate an HTML report (with issue explanations, sourcecode, etc)
+        htmlReport true
+        // optional path to report (default will be lint-results.html in the builddir)
+        htmlOutput file("${buildDir}/reports/codeqa/lint-report-${rootProject.ext.ourVersionCode}-${rootProject.ext.reportBuildDate}-${rootProject.ext.reportBuildTime}.html")
+
+        // set to true to have all release builds run lint on issues with severity=fatal
+        // and abort the build (controlled by abortOnError above) if fatal issues are found
+        checkReleaseBuilds true
+        // Set the severity of the given issues to fatal (which means they will be
+        // checked during release builds (even if the lint target is not included)
+        fatal 'NewApi', 'InlineApi'
+        // Set the severity of the given issues to error
+        error 'Wakelock', 'TextViewEdits'
+        // Set the severity of the given issues to warning
+        warning 'ResourceAsColor'
+        // Set the severity of the given issues to ignore (same as disabling the check)
+        ignore 'TypographyQuotes'
+
+
+    }
+
+
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile rootProject.ext.androidsupportv4
+
+    compile rootProject.ext.flow
+    compile rootProject.ext.mortar
+    compile rootProject.ext.retrofit
+
+    compile rootProject.ext.dagger
+    compile rootProject.ext.butterknife
+
+    compile rootProject.ext.otto
+    compile rootProject.ext.rxjava
+    compile rootProject.ext.timber
+
+    compile rootProject.ext.okhttp
+    compile rootProject.ext.okio
+    compile rootProject.ext.okhttpurlconnection
+    compile rootProject.ext.phrase
+
+
+    debugCompile rootProject.ext.scalpel
+    debugCompile rootProject.ext.madge
+    debugCompile rootProject.ext.retrofitmock
+
+    provided rootProject.ext.daggercompiler
+
+    androidTestCompile(rootProject.ext.doubleespresso){
+        exclude group: 'com.squareup.dagger', module: 'dagger'
+        exclude group: 'com.android.support', module: 'support-v4'
+
+    }
+
+    androidTestCompile rootProject.ext.fest
+    androidTestCompile rootProject.ext.robotium
+    androidTestCompile rootProject.ext.mockito
+    androidTestCompile rootProject.ext.dexmaker
+    androidTestCompile(rootProject.ext.dexmakermockito){
+        exclude module: 'hamcrest-core'
+        exclude module: 'objenesis'
+        exclude module: 'mockito-core'
+
+    }
+
+    androidTestCompile rootProject.ext.spoonclient
+
+
 }
