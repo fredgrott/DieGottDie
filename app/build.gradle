@@ -154,6 +154,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    compile project(':vpi')
+
+
     compile rootProject.ext.androidsupportv4
 
     compile rootProject.ext.flow
