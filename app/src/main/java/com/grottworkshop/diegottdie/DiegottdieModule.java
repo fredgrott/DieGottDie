@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.grottworkshop.diegottdie.core.android.AndroidModule;
 import com.grottworkshop.diegottdie.core.util.GsonParcer;
+import com.grottworkshop.diegottdie.data.DataModule;
 import com.grottworkshop.diegottdie.ui.UiModule;
 
 import javax.inject.Singleton;
