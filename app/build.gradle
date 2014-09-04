@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'spoon'
 apply plugin: 'hugo'
 apply plugin: 'idea'
+//apply plugin: 'plantuml'
 
 idea {
     module {
@@ -150,6 +151,9 @@ android {
 
 
 }
+configurations {
+    doclet
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -188,7 +192,8 @@ dependencies {
 
     }
 
-    androidTestCompile rootProject.ext.fest
+    androidTestCompile rootProject.ext.assertjandroid
+    androidTestCompile rootProject.ext.assertjandroidsupportv4
     androidTestCompile rootProject.ext.robotium
     androidTestCompile rootProject.ext.mockito
     androidTestCompile rootProject.ext.dexmaker
@@ -202,4 +207,5 @@ dependencies {
     androidTestCompile rootProject.ext.spoonclient
 
 
+    doclet rootProject.ext.apiviz
 }

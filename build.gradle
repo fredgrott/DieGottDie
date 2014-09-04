@@ -10,7 +10,8 @@ buildscript {
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
         // spoon-gradle plugin for debugging
         classpath 'com.stanfy.spoon:spoon-gradle-plugin:0.10.0'
-
+        //plantuml plugin
+        classpath 'be.jlr-home.gradle:plantumlPlugin:0.1.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -66,7 +67,10 @@ ext {
 
 
     //dependencies
+    apiviz = 'org.jboss.apiviz:apiviz:1.3.1.GA'
     androidsupportv4 = 'com.android.support:support-v4:20.0.+'
+    assertjandroid = 'com.squareup.assertj:assertj-android:1.0.0'
+    assertjandroidsupportv4 = 'com.squareup.assertj:assertj-android-support-v4:1.0.0'
     phrase = 'com.squareup.phrase:phrase:1.0.3'
     butterknife = 'com.jakewharton:butterknife:5.0.+'
     dagger = 'com.squareup.dagger:dagger:1.2.+'
@@ -74,7 +78,7 @@ ext {
     dexmaker = 'com.google.dexmaker:dexmaker:1.0'
     dexmakermockito = 'com.google.dexmaker:dexmaker-mockito:1.0'
     doubleespresso = 'com.jakewharton.espresso:espresso:1.1-r3'
-    fest = 'com.squareup:fest-android:1.0.+'
+    //fest = 'com.squareup:fest-android:1.0.+'
     flow = 'com.squareup.flow:flow:0.7'
     madge = 'com.jakewharton.madge:madge:1.1.1'
     mockito = 'org.mockito:mockito-core:1.9.5'
